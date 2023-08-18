@@ -5,26 +5,26 @@ from math import log10
 from tkinter import *
 from tkinter import ttk
 
-audio_reader = pyaudio.PyAudio()                                                                    #   Initialise the audio parser
+audio_reader = pyaudio.PyAudio()                                                                    #   Instantiate the audio parser
 WIDTH = 2                                                                                           #   Set sample width in bytes
 RATE = int(audio_reader.get_default_input_device_info()['defaultSampleRate'])                       #   Set sample rate
 DEVICE = audio_reader.get_default_input_device_info()['index']                                      #   Fetch capture device (mic / built-in)
-rms = 1                                                                                             #   Initialise root-mean-square
+rms = 1                                                                                             #   Instantiate root-mean-square
 print(audio_reader.get_default_input_device_info())                                                 #   Print capture device data to console
 
-root = Tk()                                                                                         #   Initialise Tkinter
-canvas = Canvas(root, width=300, height=200)                                                        #   Initialise square canvas, append to tkinter
-decibels = []                                                                                       #   Initialise a container to store decibel data
-x0 = 0                                                                                              #   Initialise x-axis draw start location
-x1 = 10                                                                                             #   Initialise x-axis draw end location
+root = Tk()                                                                                         #   Instantiate Tkinter
+decibels = []                                                                                       #   Define a container to store decibel data
+x0 = 0                                                                                              #   Define x-axis draw start location
+x1 = 10                                                                                             #   Define x-axis draw end location
+canvas = Canvas(root, width=300, height=200)                                                        #   Instantiate square canvas, append to tkinter
 
-def callback(in_data, frame_count, time_info, status):                                              #   Initialise audio loop callback function
+def callback(in_data, frame_count, time_info, status):
     global rms                                                                                      #   Make root-mean-square mutations accessible out of scope
     rms = audioop.rms(in_data, WIDTH) / 32767                                                       #   Calculate root-mean-square
     return in_data, pyaudio.paContinue                                                              #   Return data, continue stream
 
 
-stream = audio_reader.open(format=audio_reader.get_format_from_width(WIDTH),                        #   Initialise a stream from the capture device
+stream = audio_reader.open(format=audio_reader.get_format_from_width(WIDTH),                        #   Create a stream to capture audio device data
                 input_device_index=DEVICE,
                 channels=1,
                 rate=RATE,
@@ -32,10 +32,10 @@ stream = audio_reader.open(format=audio_reader.get_format_from_width(WIDTH),    
                 output=False,
                 stream_callback=callback)
 
-def create_window():                                                                                #   Define main window
-    root.title('Audio Visualiser')                                                                  #   Set main windows title
-    root_frame = ttk.Frame(root, padding=250)                                                       #   Create a window-frame, append to tkinter
-    root_frame.grid()                                                                               #   Initialise window layout as a grid
+def create_window():
+    root.title('Audio Visualiser')                                                                  #   Instatiate window title
+    root_frame = ttk.Frame(root, padding=250)                                                       #   Instatiate window-frame, append to tkinter
+    root_frame.grid()                                                                               #   Instantiate window layout as a grid
 
     ttk.Label(root_frame, text="~AUDIO VISUALISER~").grid(column=2, row=0)                          #   Create a label / text, append to window-frame
     ttk.Button(root_frame, text="Listen", command=fetch_decibels).grid(column=2, row=1)             #   Create a button, reference onClick function, append to window-frame
@@ -54,11 +54,13 @@ def draw():                                                                     
         currentDecStr = str(decibels[-1])                                                           #   Fetch first most recent dB reading from array
         currentPosInt = int(currentDecStr[1:].split('.')[0])                                        #   Convert negative floating point to positive integer
         canvas.create_line(x0, prevPosInt, x1, currentPosInt, fill='red', width=3)                  #   Draw a line on the canvas
+        canvas.configure(scrollregion=canvas.bbox('all'))
+        canvas.xview_moveto(1)
         x0 += 10                                                                                    #   Mutate the x-axis start point
         x1 += 10                                                                                    #   Mutate the x-axis endpoint
 
 def fetch_decibels():                                                                               #   Define streamdata to dB converter
-    stream.start_stream()                                                                           #   Start the audio stream
+    stream.start_stream()                                                                           #   Initialise the audio stream
 
     while stream.is_active():                                                                       #   Check the stream is still running, if so, loop
         db = 20 * log10(rms)                                                                        #   Calculate stream data as decibels
