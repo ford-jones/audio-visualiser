@@ -10,6 +10,7 @@ python3 --version
 If you don't, please find a guide in the resources section at the bottom of this file.
 
 ## Setup your python virtual environment
+Before cloning the project, follow these steps.
 
 1. From your working directory, make a new folder and navigate into it:
 ```
@@ -36,6 +37,11 @@ pip list
 ```
 deactivate
 ```
+
+6. You can now clone the project
+```
+https://github.com/ford-jones/audio-visualiser.git
+```
 ## Install dependencies:
 install the dependencies using pip:
 ```
@@ -53,7 +59,7 @@ This project uses `Tkinter` to launch a native window which, from what I've read
 For me it wasn't, find the download link in the resources section below.
 
 ## Resources: 
-1. https://docs.python.org/3.11/using/index.html
-2. Tkinter documentation: https://tkdocs.com/
-3. Tkinter installation: https://tkdocs.com/tutorial/install.html 
+1. Python installation: https://docs.python.org/3.11/using/index.html
+2. Tkinter installation: https://tkdocs.com/tutorial/install.html 
+3. Tkinter documentation: https://tkdocs.com/
 4. pyAudio documentation: https://people.csail.mit.edu/hubert/pyaudio/docs/
