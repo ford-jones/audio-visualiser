@@ -13,9 +13,10 @@ rms = 1                                                                         
 print(audio_reader.get_default_input_device_info())                                                 #   Print capture device data to console
 
 root = Tk()                                                                                         #   Initialise Tkinter
-# root.geometry('800x800')
 canvas = Canvas(root, width=300, height=200)                                                        #   Initialise square canvas, append to tkinter
 decibels = []                                                                                       #   Initialise a container to store decibel data
+x0 = 0                                                                                              #   Initialise x-axis draw start location
+x1 = 10                                                                                             #   Initialise x-axis draw end location
 
 def callback(in_data, frame_count, time_info, status):                                              #   Initialise audio loop callback function
     global rms                                                                                      #   Make root-mean-square mutations accessible out of scope
@@ -39,21 +40,22 @@ def create_window():                                                            
     ttk.Label(root_frame, text="~AUDIO VISUALISER~").grid(column=2, row=0)                          #   Create a label / text, append to window-frame
     ttk.Button(root_frame, text="Listen", command=fetch_decibels).grid(column=2, row=1)             #   Create a button, reference onClick function, append to window-frame
     canvas.grid(column=0, row=2, sticky=(N, W, E, S))                                               #   Initialise canvas layout as grid
-        
-    # style = ttk.Style()
-
-    # style.theme_create('av', settings={
-    #     'TFrame': {'configure': {'background': '#5A5A5A'}}
-    # })
-
-    # style.theme_use('av')
-
-    root.mainloop()
+    sb = Scrollbar(root, orient='horizontal', command=canvas.xview)                                 #   Create a scrollbar, reference canvas onScroll function, append to window-frame
+    sb.grid(row=1, column=0, sticky=(W, E))                                                         #   Initialise scrollbar layout as grid
+    canvas.configure(xscrollcommand=sb.set)                                                         #   Configure canvas scroll behavior
+    root.mainloop()                                                                                 #   Run main event / render loop
 
 def draw():                                                                                         #   Define draw function
-    decStr = str(decibels[-1])                                                                      #   Fetch most recent dB reading from array
-    posInt = int(decStr[1:].split('.')[0])                                                          #   Convert negative floating point to positive integer
-    canvas.create_line(15, 25, 200, posInt, fill='red', width=3)                                    #   Draw a line on the canvas
+    global x0                                                                                       #   Make x-axis mutations available out of scope
+    global x1                                                                                       #   Make x-axis mutations available out of scope
+    if(len(decibels) > 1):
+        prevDecStr = str(decibels[-2])                                                              #   Fetch seacond most recent dB reading from array
+        prevPosInt = int(prevDecStr[1:].split('.')[0])                                              #   Convert negative floating point to positive integer
+        currentDecStr = str(decibels[-1])                                                           #   Fetch first most recent dB reading from array
+        currentPosInt = int(currentDecStr[1:].split('.')[0])                                        #   Convert negative floating point to positive integer
+        canvas.create_line(x0, prevPosInt, x1, currentPosInt, fill='red', width=3)                  #   Draw a line on the canvas
+        x0 += 10                                                                                    #   Mutate the x-axis start point
+        x1 += 10                                                                                    #   Mutate the x-axis endpoint
 
 def fetch_decibels():                                                                               #   Define streamdata to dB converter
     stream.start_stream()                                                                           #   Start the audio stream
