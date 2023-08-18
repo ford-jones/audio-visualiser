@@ -54,20 +54,20 @@ def draw():                                                                     
         currentDecStr = str(decibels[-1])                                                           #   Fetch first most recent dB reading from array
         currentPosInt = int(currentDecStr[1:].split('.')[0])                                        #   Convert negative floating point to positive integer
         canvas.create_line(x0, prevPosInt, x1, currentPosInt, fill='red', width=3)                  #   Draw a line on the canvas
-        canvas.configure(scrollregion=canvas.bbox('all'))
-        canvas.xview_moveto(1)
-        x0 += 10                                                                                    #   Mutate the x-axis start point
-        x1 += 10                                                                                    #   Mutate the x-axis endpoint
+        canvas.configure(scrollregion=canvas.bbox('all'))                                           #   Configure the canvases scroll area to be the entirety of its' own binding box
+        canvas.xview_moveto(1)                                                                      #   Move to the end location of the x-axis scroll bar
+        x0 += 10                                                                                    #   Mutate the x-axis line start point
+        x1 += 10                                                                                    #   Mutate the x-axis line endpoint
 
-def fetch_decibels():                                                                               #   Define streamdata to dB converter
+def fetch_decibels():
     stream.start_stream()                                                                           #   Initialise the audio stream
 
     while stream.is_active():                                                                       #   Check the stream is still running, if so, loop
         db = 20 * log10(rms)                                                                        #   Calculate stream data as decibels
         decibels.append(db)                                                                         #   Append most recent calculation to decibels array
         draw()                                                                                      #   Call the draw function
-        time.sleep(0.1)                                                                             #   Sleep for 0.1sec, when awake loop condition will be checked
         root.update()                                                                               #   Update tkinter (update draw result)
+        time.sleep(0.1)                                                                             #   Sleep for 0.1sec, when awake loop condition will be checked
 
     stream.stop_stream()                                                                            #   Stop stream capture once stepped out of loop
     stream.close()                                                                                  #   Close the stream
